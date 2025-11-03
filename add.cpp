@@ -12,12 +12,34 @@ int str_to_int(char* str)
     }
     return result;
 }*/
+int is_sign (char str[]) {
+    if (str[0]=='-') {
+        std::cout<< -1<< std::endl;
+        return -1;
+    } else {
+        std::cout<< 1<< std::endl;
+        return 1;
+    }
+}
+
+int is_digit (char* str) {
+    char n=*str;
+    if (n=='0'){
+        return true;
+    } else if (std::atoi(str)==0) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
 
 int main(int argc, char* argv []){
     if (argc==1) {
         std::cout <<"error: not enough arguments"<< std::endl;
         return -1;
     } else {
+        std::cout <<is_digit(argv[1])<<std::endl;
         int sum = 0;
         for (int i = 1; i < argc; i++){
             sum = sum + std::atoi(argv[i]);
@@ -26,9 +48,6 @@ int main(int argc, char* argv []){
         std::cout <<"La somme totale est: " << sum << std::endl;
     }
     return 0;
-
-
-
 
     /*int sum = '0' ;
     for (int i=0; i<=argc; i++)
