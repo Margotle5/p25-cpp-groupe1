@@ -32,21 +32,18 @@ void push(int* tab,int& size,int& nb,int val) {
 }
 
 int top(int* tab, int& size, int& nb){
-    if (nb==0){
-        throw std::out_of_range(std::string("Erreur: rien dans le tableau"));
-        return -1;
+    if (is_empty(nb)){
+        throw std::length_error("Erreur: tab doesn't have enough space to add value");
     }
     return tab[nb-1];
 }
 
 int pop(int* tab,int& size,int& nb){
-    if (nb==0){
+    if (is_empty(nb)){
         std::out_of_range(std::string("Nothing to pop"));
-        return -1;
-    } else {
-        nb=nb-1;
-        return tab[nb];
     }
+    nb=nb-1; 
+    return tab[nb];
 }
 int main(){
 
@@ -80,13 +77,13 @@ int main(){
         push(stack, size, nb_r, -9);
         push(stack, size, nb_r, 68);
     }
-    catch (std::length_error)
+    catch (std::length_error& e)
     {
-        std::cerr <<"Le tableau est plein: ";
+        std::cerr <<"Le tableau est plein: "  << e.what() << std::endl;
         print(stack, size, nb_r);
     }
-    catch (std::out_of_range){
-        std::cerr <<"Le tableau est vide:";
+    catch (std::out_of_range& e){
+        std::cerr <<"Le tableau est vide:" << e.what() << std::endl;
         print(stack, size, nb_r);
     }
     return 0;
