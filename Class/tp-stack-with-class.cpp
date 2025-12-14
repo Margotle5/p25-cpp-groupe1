@@ -81,6 +81,7 @@ int main()
         Stack stack(5);
         stack.push(1);
         stack.print();
+        std::cout << &stack << std::endl;
     }
     return 0;
 }
