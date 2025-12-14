@@ -1,6 +1,11 @@
 #include <iostream>
 #include <stdexcept>
 
+int* create_stack(int size){
+    int* tab = new int [size]; // crée un tableau dans le heap
+    return tab;
+}
+
 void print(int* tab, int& size, int& nb) {
     std::cout <<"[ ";
     for (int i=nb-1; i>=0; i--) {
@@ -49,7 +54,7 @@ int main(){
 
     // on définit les 3 variables constituant la pile
     int size = 5;
-    int stack[size];
+    int stack[size]; //crée tab de taille size
     int nb = 0;
 
     int& nb_r=nb;
