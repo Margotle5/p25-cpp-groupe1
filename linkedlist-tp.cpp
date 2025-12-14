@@ -1,4 +1,4 @@
-#include <iostream>
+
 // Nous voulons implémenter un type de donné qui a la structure de liste chaînée
 // et qui stocke, par exemple, des entiers.
 
@@ -54,46 +54,123 @@
 
 struct Cell
 {
-    Cell* pointer_to_last;
+    Cell *pointer;
     int value;
 
-    Cell(int value, Cell *pointer) : value(value), pointer_to_last(pointer) {
+    Cell(int value, Cell *pointer) : value(value), pointer(pointer) {
 
-        };
+                                     };
 };
 
 struct LinkedList
 {
-    Cell* ptr = nullptr;
-    int size;
+    Cell *ptr = nullptr;
+    int size = 0;
 
-    void push(int value)
+    bool is_empty()
     {
-        Cell cell = new Cell(value, ptr);
+        if (size == 0)
+        {
+            return true;
+        }
+        return false;
+    };
+
+    void push_front(int value)
+    {
+        Cell *cell = new Cell(value, ptr);
         size++;
-        ptr = *cell;
+        ptr = cell;
+    };
+
+    void print()
+    {
+        Cell *pointeur = ptr;
+        int elem;
+        for (int i = 0; i < size; i++)
+        {
+            elem = (*pointeur).value;
+            std::cout << elem << " -> ";
+            pointeur = (*pointeur).pointer;
+        }
+        std::cout << "null" << std::endl;
+    };
+
+    bool find(int n)
+    {
+        Cell *pointeur = ptr;
+        int elem;
+        for (int i = 0; i < size; i++)
+        {
+            elem = (*pointeur).value;
+            if (n == elem)
+            {
+                std::cout << "La valeur " << n << " est en position " << i << std::endl;
+                return true;
+            }
+            pointeur = (*pointeur).pointer;
+        }
+        std::cout << "False" << std::endl;
+        return false;
     }
-}
+
+    void remove(int n) {
+        // rajouter condition si l'elem est en premier ou en dernier + cas ou liste vide
+        if (size==0) {
+            return;
+        }
+        if (n== (*ptr).value) {
+            ptr= (*ptr).pointer;
+        }
+
+        Cell *pointeur = ptr;
+        int elem = (*pointeur).value;
+        for (int i = 0; i < size; i++) // cas ou liste pas vide + elem à enlever n'est ni premier ni dernier
+        {
+            elem = (*(*pointeur).pointer).value; // on est 'une case après le pointeur'
+            if (n == elem)
+            {
+                Cell* p = (*(*pointeur).pointer).pointer; // on récupère la valeur du pointeur de la cell qu'on remove
+                delete (*pointeur).pointer; // détruit la cell de elem
+                pointeur= p;
+                return;
+            }
+            pointeur = (*pointeur).pointer;
+        }
+    };
+
+};
+
 int main()
 {
-    LinkedList list;
+    {
+        LinkedList list;
+        list.print();
+        list.push_front(45);
+        list.push_front(12);
+        list.print();
+        list.find(12);
+        list.find(32);
+        list.remove(32);
+        list.remove(12);
+        // std::cout << (*list.ptr).value << (*(*list.ptr).pointer).value << std::endl;
+        /*
+        list.push_front(12);
+        list.push_front(42);
+        list.push_front(33);
+        list.push_front(17);
 
-    list.push_front(45);
-    list.push_front(12);
-    list.push_front(42);
-    list.push_front(33);
-    list.push_front(17);
+        list.print(); // Affiche: 17 33 42 12 45
+                      // oui l'ordre est inversé car on ajoute en tête de liste...
 
-    list.print(); // Affiche: 17 33 42 12 45
-                  // oui l'ordre est inversé car on ajoute en tête de liste...
+        list.remove(88); // Ne fait rien (et pas d'exception à générer)
+        list.remove(17); // Attention on supprime la tête de liste !!
+        list.remove(45); // Attention on supprime la queue de liste !!
+        list.remove(42); // Supprime un élément du milieu de liste
+        // que de cas à gérer... que de pointeurs à mettre à jour...
 
-    list.remove(88); // Ne fait rien (et pas d'exception à générer)
-    list.remove(17); // Attention on supprime la tête de liste !!
-    list.remove(45); // Attention on supprime la queue de liste !!
-    list.remove(42); // Supprime un élément du milieu de liste
-    // que de cas à gérer... que de pointeurs à mettre à jour...
-
-    list.print();
-
+        list.print();
+    */
+    }
     return 0;
 }
