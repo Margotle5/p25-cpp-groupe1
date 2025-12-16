@@ -54,89 +54,92 @@
 
 struct Cell
 {
-    Cell *pointer;
+    Cell *next;
     int value;
 
-    Cell(int value, Cell *pointer) : value(value), pointer(pointer) {
-
-                                     };
+    Cell(int value, Cell *next=nullptr) : value(value), next(next) {
+     }
 };
 
 struct LinkedList
 {
-    Cell *ptr = nullptr;
+    Cell *first = nullptr;
     int size = 0;
 
     bool is_empty()
     {
-        if (size == 0)
-        {
-            return true;
-        }
-        return false;
+        return (size==0);
     };
 
     void push_front(int value)
     {
-        Cell *cell = new Cell(value, ptr);
-        size++;
-        ptr = cell;
+        size= size + 1 ;
+        first = new Cell(value, first);
     };
 
     void print()
     {
-        Cell *pointeur = ptr;
-        int elem;
+         //std::cout << '(' << size << ") " << std::endl;
+        Cell *current = first;
+
         for (int i = 0; i < size; i++)
         {
-            elem = (*pointeur).value;
-            std::cout << elem << " -> ";
-            pointeur = (*pointeur).pointer;
+            std::cout << current->value << " -> ";
+            current = current->next;
         }
         std::cout << "null" << std::endl;
     };
 
     bool find(int n)
     {
-        Cell *pointeur = ptr;
-        int elem;
+        Cell *current = first;
+
         for (int i = 0; i < size; i++)
         {
-            elem = (*pointeur).value;
+            int elem = current->value;
             if (n == elem)
             {
                 std::cout << "La valeur " << n << " est en position " << i << std::endl;
                 return true;
             }
-            pointeur = (*pointeur).pointer;
+            current = current->next;
         }
         std::cout << "False" << std::endl;
         return false;
     }
 
     void remove(int n) {
-        // rajouter condition si l'elem est en premier ou en dernier + cas ou liste vide
-        if (size==0) {
+        if (is_empty()) {
             return;
         }
-        if (n== (*ptr).value) {
-            ptr= (*ptr).pointer;
+
+        //Cas ou la cell à suprimer est la première
+        Cell* current = first;
+
+        if (current->value==n) {
+            first= first->next;
+            delete current;
+            size--;
+            return;
         }
 
-        Cell *pointeur = ptr;
-        int elem = (*pointeur).value;
-        for (int i = 0; i < size; i++) // cas ou liste pas vide + elem à enlever n'est ni premier ni dernier
-        {
-            elem = (*(*pointeur).pointer).value; // on est 'une case après le pointeur'
-            if (n == elem)
-            {
-                Cell* p = (*(*pointeur).pointer).pointer; // on récupère la valeur du pointeur de la cell qu'on remove
-                delete (*pointeur).pointer; // détruit la cell de elem
-                pointeur= p;
+        Cell* last = first;
+        current=first->next;
+
+        while (current) {
+            if (current->value == n) {
+                last->next = current->next;
+                size--;
+                delete current;
                 return;
             }
-            pointeur = (*pointeur).pointer;
+            last = current;
+            current=current->next;
+            
         }
+
+
+       
     };
 
 };
@@ -146,15 +149,12 @@ int main()
     {
         LinkedList list;
         list.print();
-        list.push_front(45);
+        list.push_front(42);
+        list.push_front(2);
         list.push_front(12);
+        list.push_front(2);
         list.print();
-        list.find(12);
-        list.find(32);
-        list.remove(32);
         list.remove(12);
-        // std::cout << (*list.ptr).value << (*(*list.ptr).pointer).value << std::endl;
-        /*
         list.push_front(12);
         list.push_front(42);
         list.push_front(33);
@@ -170,7 +170,6 @@ int main()
         // que de cas à gérer... que de pointeurs à mettre à jour...
 
         list.print();
-    */
     }
     return 0;
 }
