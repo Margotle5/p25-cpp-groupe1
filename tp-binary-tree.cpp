@@ -30,7 +30,7 @@ Vous l'avez compris, étant donné un noeud:
 
 Voici le dessin de l'arbre nous allons prendre en exemple dans le main (8 est la racine):
 en trichant on a inséré les valeurs de manière à ce qu'il soit équilibré...
-Quel est la complexité en temps de la recherche d'un élément dans un arbre binaire équilibré ?
+Quel est la complexité en temps de la recherche d'un élément dans un arbre binaire équilibré ? Si on a un arbre équilibré à n niveau il faut verifier 1 + 2 + ... +2^n-1 elements
 dégénéré
                15
           14
@@ -136,14 +136,68 @@ void enum_values()
 // avec les méthodes pour que le code compile.
 struct Node
 {
-     // votre code là
+     int value;
+     Node* right=nullptr;
+     Node* left=nullptr;
+     Node(int value): value(value) 
+     {
+          //
+     };
+
+     /*Node*& side(int elem) {
+          if (elem > value) {
+               return right;
+          } else  {
+               return left;
+          }
+     };*/
+
+
+     Node* insert( int elem) { 
+          /* version trop compliqué du code
+          Node*& side_ptr = side(elem);
+          if (&side_ptr == nullptr) {
+               Node* new_n=new Node(elem);
+               side_ptr=new_n;
+               return new_n;
+          }else {
+              return side_ptr->insert(elem);
+          }*/
+
+          if (elem>value) {
+               if (right==nullptr)
+               {
+                    right = new Node(elem);
+               } else {
+                   return right->insert(elem);
+               }
+          } else if (elem < value) {
+               if (left==nullptr)
+               {
+                    left = new Node(elem);
+               } else {
+                    return left->insert(elem);
+               }
+          }
+     }
+
 };
 
 struct BinaryTree
 {
-     // votre code là
+     Node* root = nullptr;
      // et ces fonctions à implémenter à minima
-     void insert(int) {}
+     void insert(int elem) {
+          if (root==nullptr) {
+               root = new Node(elem);
+          } 
+          else {
+               root->insert(elem);
+          }
+     }
+
+
+
      void depth(Order o) {}
      bool search(int v) { return false; }
 
