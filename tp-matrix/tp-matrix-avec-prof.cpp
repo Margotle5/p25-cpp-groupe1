@@ -251,7 +251,7 @@ public:
 };
 
 int main()
-{
+{   /*
     // Matrix m1 = Matrix(4, 3);
     // faire plus simplement:
     Matrix m1(4, 3);
@@ -279,5 +279,11 @@ int main()
     m6 = m7; //c++ va enfait faire m6.operator=(m7); il faut donc redéfinir operator=
     // Comprenez-vous ce qui se passe ?
     m6.print();
+    */
+
+    Matrix M= Matrix(2,2);
+    Matrix M2=M;
+    M2.set(0,1,1.2);
+    M.print();
     return 0;
 }

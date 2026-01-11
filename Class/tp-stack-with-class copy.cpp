@@ -1,6 +1,14 @@
 #include <iostream>
 #include <stdexcept>
 
+struct tab 
+{
+    int size;
+    int nb_Stack;
+    int *tab;
+    
+};
+
 struct Stack
 {
     int size;
