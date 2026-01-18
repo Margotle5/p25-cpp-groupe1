@@ -50,3 +50,41 @@ Stack *ps = new Stack(200);
 ps->push(-17);
 delete ps; //delete appel d'abord le destructeur de ps puis delete le truc à l'adresse ps de la mémoire heap
 
+Inline:
+inline int* foo(int v) {
+    int i = v;
+    return &i
+}
+
+avec inline lorsque le code compile, il réécrit le code la fonction lors de son appel->mieux pour la mémoire
+On met toujours inline devant les fonctions
+
+struct Int {
+    int value=0;
+    void incr() {value +=1};
+    void decr() {value-=1};
+    int get() {return value};
+
+};
+
+Les méthodes dans la classe sont toutes définie dans lors de la définition de la classe
+mais on peut définir les fonctions à l'exterieur de du corps de la class
+
+struct Int {
+    int value=0;
+    void incr(); //déclaration d'une fonction à définir après
+    void decr() {value-=1};
+    int get() {return value};
+
+};
+
+(inline) void Int::incr(){
+    value++;
+}
+
+Différence entre fonction déclaré dans la class et hors de la classe:
+-Celles définies dans la classe sont automatiquement "inline"
+
+Compilation séparé:
+#inclue <iostream>
+Commande au pré-processeur 

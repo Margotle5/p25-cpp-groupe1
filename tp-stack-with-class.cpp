@@ -108,13 +108,13 @@ public:
 
     Stack& operator=(const Stack& stack) {
         if (this != &stack) {
-            tab= stack.tab;
+            tab = new tableau((stack.tab)->size);
             stack.tab->incr();
         }
         return *this;
     }
     
-    Stack(const Stack& stack) {
+    Stack(const Stack& stack) : tab(stack.tab) {
         tab->incr();
     }
 

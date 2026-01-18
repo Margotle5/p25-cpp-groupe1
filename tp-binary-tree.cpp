@@ -116,6 +116,7 @@ Pour décider de l'affichage, on peut donc passer à cette méthode le type de l
 
 */
 #include <iostream>
+#include <stack> 
 
 // the type enum
 enum Order
@@ -137,72 +138,195 @@ void enum_values()
 struct Node
 {
      int value;
-     Node* right=nullptr;
-     Node* left=nullptr;
-     Node(int value): value(value) 
+     Node *right = nullptr;
+     Node *left = nullptr;
+     Node(int value) : value(value)
      {
           //
-     };
+     }
 
-     /*Node*& side(int elem) {
-          if (elem > value) {
+     Node *&side(int elem)
+     {
+          if (elem > value)
+          {
                return right;
-          } else  {
+          }
+          else
+          {
                return left;
           }
-     };*/
+     };
 
-
-     Node* insert( int elem) { 
-          /* version trop compliqué du code
-          Node*& side_ptr = side(elem);
-          if (&side_ptr == nullptr) {
-               Node* new_n=new Node(elem);
-               side_ptr=new_n;
+     Node *insert(int elem)
+     {
+          // version trop compliqué du code
+          Node *&side_ptr = side(elem);
+          if (side_ptr == nullptr)
+          {
+               Node *new_n = new Node(elem);
+               side_ptr = new_n;
                return new_n;
-          }else {
-              return side_ptr->insert(elem);
-          }*/
-
-          if (elem>value) {
-               if (right==nullptr)
-               {
-                    right = new Node(elem);
+          }
+          else
+          {
+               return side_ptr->insert(elem);
+          }
+     }
+     /*     Node* insert1(int elem) {
+               if (elem>value) {
+                    if (right==nullptr)
+                    {
+                         right = new Node(elem);
+                    } else {
+                        return right->insert(elem);
+                    }
+               } else if (elem < value) {
+                    if (left==nullptr)
+                    {
+                         left = new Node(elem);
+                    } else {
+                         return left->insert(elem);
+                    }
                } else {
-                   return right->insert(elem);
+                    return this;
                }
-          } else if (elem < value) {
-               if (left==nullptr)
-               {
-                    left = new Node(elem);
-               } else {
-                    return left->insert(elem);
-               }
+          }
+     */
+     void depth(Order o)
+     {
+          if (o == Prefix)
+          {
+               std::cout << value << " ";
+          }
+          if (left)
+          {
+               left->depth(o);
+          }
+          if (o == Infix)
+          {
+               std::cout << value << " ";
+          }
+          if (right)
+          {
+               right->depth(o);
+          }
+          if (o == Postfix)
+          {
+               std::cout << value << " ";
           }
      }
 
+     bool search(int v)
+     {
+          if (value == v)
+          {
+               return true;
+          }
+          if (side(v)) {
+               return side(v)->search(v);
+          }
+          return false;
+     }
+
+     void print(int depth = 0)
+     {
+          if (right)
+          {
+               right->print(depth + 1);
+          }
+          for (int i = 0; i < depth; i++)
+          {
+               std::cout << "     ";
+          }
+          std::cout << value << std::endl;
+          if (left)
+          {
+               left->print(depth + 1);
+          }
+     }
 };
 
 struct BinaryTree
 {
-     Node* root = nullptr;
+     Node *root = nullptr;
      // et ces fonctions à implémenter à minima
-     void insert(int elem) {
-          if (root==nullptr) {
+     void insert(int elem)
+     {
+          if (root == nullptr)
+          {
                root = new Node(elem);
-          } 
-          else {
+          }
+          else
+          {
                root->insert(elem);
           }
      }
 
-
-
-     void depth(Order o) {}
-     bool search(int v) { return false; }
+     void depth(Order o)
+     {
+          if (root)
+          {
+               std::cout << "{ ";
+               root->depth(o);
+               std::cout << "}" << std::endl;
+          }
+          else
+          {
+               std::cout << "arbre vide" << std::endl;
+          }
+     }
+     bool search(int v)
+     {
+          if (root)
+          {
+               return root->search(v);
+          }
+          return false;
+     }
 
      // celle là est plus difficile
-     void print() {}
+     void print()
+     {
+          if (root)
+          {
+               root->print(0);
+          }
+          else
+          {
+               std::cout << "empty tree" << std::endl;
+          }
+     }
+
+     void nr_depth(Order o) {
+          std::stack<Node*> st;
+          if (root) {
+               std::cout << " { ";
+               st.push(root);
+               Node* current_node;
+               while (!st.empty()) {
+                    current_node = st.pop();
+                    if (o==Prefix) {
+                         std::cout << current_node->value << " ";
+                    }
+                    if (current_node->right) {
+                         st.push(current_node->right);
+                    }
+                    if (o==Infix) {
+                         std::cout << current_node->value << " ";
+                    }
+                    if (current_node->left) {
+                         st.push(current_node->left);
+                    }
+                    if (o==Postfix) {
+                         std::cout << current_node->value << " ";
+                    }
+               }
+          } 
+          else
+          {
+               std::cout << "empty tree" << std::endl;
+          }
+     }
 };
 
 int main()
@@ -253,6 +377,7 @@ int main()
      for (int i = 30; i > 15; i--)
           bad2.insert(i);
      bad2.print();
+     return 0;
 }
 
 /* l'exécution de ce programme donne:
