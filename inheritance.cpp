@@ -22,7 +22,7 @@ class Rectangle_1 {
 };
 
 int main(){
-    Circle c1(30,20,10);
-    Rectangle r1 (40, 40, 10,25);
+    Circle_1 c1(30,20,10);
+    Rectangle_1 r1 (40, 40, 10,25);
     return 0;
 };

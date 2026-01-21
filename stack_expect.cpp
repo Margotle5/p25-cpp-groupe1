@@ -1,7 +1,30 @@
 #include <iostream>
-#include <stdexcept>
+#include <exception>
+#include <string>
 
+class expection {
+protected:
+    char* message;
+    expection( char* m): message(m) {}
+};
 
+class length_error: public expection {
+public:
+    length_error(): expection("Error: Stack size must be positive"){
+    };
+
+    
+};
+
+class full_tab: public expection {
+public:
+    full_tab(): expection("Error: tab full") {};
+};
+
+class empty_tab: public expection {
+public:
+    empty_tab(): expection("Error: tab is empty") {} ;
+};
 
 class tableau 
 {
@@ -16,7 +39,7 @@ class tableau
     {
         if (size <= 0)
         {
-            throw std::length_error("Stack size must be positive");
+            throw ;
         }
         tab = new int[size];
     }
@@ -77,7 +100,7 @@ class tableau
     {
         if (is_empty())
         {
-            throw std::length_error("Erreur: tab doesn't have enough space to add value");
+            throw length_error();
         }
         return tab[nb - 1];
     }
@@ -86,7 +109,7 @@ class tableau
     {
         if (is_empty())
         {
-            std::out_of_range(std::string("Nothing to pop"));
+            throw empty_tab();
         }
         nb = nb - 1;
         return tab[nb];
@@ -98,14 +121,8 @@ class tableau
 
 };
 
-/*std::ostream& operator<<(std::ostream &os, const Stack &st) {
-    os << "[ "<<;
-    for (int i = 0; i<st.tab)
-}*/
-
 class Stack
 {
-    friend std::ostream &operator<<(std::ostream &os, const Stack &st) ;
 
     tableau *tab;
 public:
@@ -169,13 +186,14 @@ public:
 };
 
 int main()
-{
-    Stack stack(5);
-    stack.push(1);
-    stack.print();
-    Stack stack2(stack);
-    stack2.push(2);
-    stack.print();
-    stack2.print();
+{   
+    try {
+        Stack stack(2);
+        stack.push(1);
+        stack.push(1);
+        stack.push(1);
+    }
+    catch(expection& e) {};
+        
     return 0;
 }
