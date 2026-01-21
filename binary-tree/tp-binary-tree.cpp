@@ -304,7 +304,8 @@ struct BinaryTree
                st.push(root);
                Node* current_node;
                while (!st.empty()) {
-                    current_node = st.pop();
+                    current_node= st.top();
+                    st.pop();
                     if (o==Prefix) {
                          std::cout << current_node->value << " ";
                     }
@@ -326,6 +327,7 @@ struct BinaryTree
           {
                std::cout << "empty tree" << std::endl;
           }
+          std::cout << "}" << std::endl;
      }
 };
 
@@ -357,7 +359,8 @@ int main()
      b.insert(7);
      b.print();
 
-     std::cout << "Infix ";
+
+     std::cout << "Infix";
      b.depth(Order::Infix);
      std::cout << "Postfix ";
      b.depth(Order::Postfix);
@@ -365,7 +368,6 @@ int main()
      b.depth(Order::Prefix);
      std::cout << std::boolalpha << b.search(25) << std::endl;
      std::cout << std::boolalpha << b.search(2) << std::endl;
-
      std::cout << "Cet arbre est dégénéré:\n";
      BinaryTree bad1;
      for (int i = 1; i < 16; i++)
