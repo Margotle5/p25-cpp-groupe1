@@ -62,6 +62,10 @@
 #include <vector>
 #include <unordered_map>
 #include <set>
+#include <stack> //J'ajoute les stack pour coder le dfs
+#include "matrix.h"
+
+
 using namespace std; // pour éviter d'écrire les std::
 
 class Edge;
@@ -71,6 +75,7 @@ class Graph;
 class Edge
 {
     friend class Vertex;
+    friend class Graph;
 
 protected:
     double weight;
@@ -108,6 +113,7 @@ protected:
             edge->print();
         }
     }
+
 };
 
 class Graph
@@ -115,10 +121,9 @@ class Graph
 private:
     vector<Vertex *> vertex_list;
     unordered_map<string, int> correlation_map;
+    Matrix adj_matrix;
 
     // on utilise le constructeur par défaut
-
-    
 
     bool is_in_graph(string name)
     {
@@ -135,6 +140,39 @@ private:
     }
 
 public:
+/*
+    Matrix adj_matrix(){
+        adj_matrix = Matrix(vertex_list.size(), vertex_list.size());
+        for (int i = 0; i<vertex_list.size(); i++) {
+            for (Edge* edge : vertex_list[i]->edge_list) {
+                adj_matrix.set(i,correlation_map[edge->end], 1);
+            }
+        }
+        return adj_matrix;
+    }
+    */
+
+    void read_triplet(const string &filename) {
+        ifstream file(filename);
+
+        if (not file.is_open())
+        {
+        throw std::runtime_error(std::string("file ") + filename + std::string(" not found"));
+        }
+
+        std::string from, to;
+        double value;
+
+        while (file >> from >> to >> value) 
+        {
+            add_edge(from, to, value);
+        }
+
+        file.close();
+
+    }
+
+
     void add_edge(const string &begin, const string &end, double value)
     {
         add_vertex(begin);
@@ -143,7 +181,34 @@ public:
         vertex_list[correlation_map[begin]]->add_edge(end, value);
     }
 
-    void dfs() {}
+    void dfs() {
+        set<string> visited;
+        stack<string> stack;
+
+        if (vertex_list.size() != 0)
+        {
+            visited.insert(vertex_list[0]->name);
+            stack.push(vertex_list[0]->name);
+            string current;
+
+            while (stack.size() != 0) {
+                current = stack.top();
+                stack.pop();
+
+                if (visited.find(current)!=visited.end()) {
+                    visited.insert(current);
+                    for (Edge* edge : vertex_list[correlation_map[current]]->edge_list) {
+                        stack.push(edge->end);
+                    }
+                }
+
+            }
+            
+
+
+        }
+
+    }
 
     // Pour debuger
     void print()
@@ -210,12 +275,12 @@ int main()
     g.add_edge("Paris", "Londres", 1.2);
     g.print();
 
-/*     
-g.print();
-*/
 
     // LECTURE DU GRAPHE
-    //Graph graph = read_triplet("graph0.gr");
+    Graph graph;
+    graph.read_triplet("graph0.gr");
+    graph.print();
+    //(graph.adj_matrix()).print();
     //graph.dfs();
 
     /*    // EXEMPLE D'UTILISATION D'UN DICTIONNAIRE STD::UNORDERED_MAP
