@@ -1,4 +1,5 @@
 //On reprend les classes matrix créée précédement
+#pragma once 
 #include <iostream>
 #include <stdexcept>
 
@@ -15,7 +16,7 @@ private:
 
 public:
     Buffer(int size, int init = 0)
-        : counter(0), size(size)
+        : size(size), counter(0)
     {
         tab = new double[size];
 
@@ -87,12 +88,9 @@ public:
 
 class Matrix
 {
-    // Le tableau sous-jacent
-    Buffer *buffer_ptr;
-
-    // l'indexation
-    int rows;
-    int columns;
+    int rows = 0;
+    int columns = 0;
+    Buffer *buffer_ptr = nullptr;
 
     int flatten_indices(int i, int j)
     {
@@ -126,7 +124,9 @@ private:
 
 
 public:
-    Matrix(const Matrix& M): rows(M.rows), columns(M.columns), buffer_ptr(M.buffer_ptr) //Pourquoi il faut des références -> car on nous fournit une référence et non une adresse mémoire
+    //Matrix() = default;
+
+    Matrix(const Matrix& M): rows(M.rows), columns(M.columns), buffer_ptr(M.buffer_ptr) 
     {
         buffer_ptr->incr_counter();
     }
@@ -212,3 +212,4 @@ public:
         decr_buffer();
     }
 };
+
