@@ -81,9 +81,10 @@ int main()
     // LECTURE DU GRAPHE
     Graph graph;
     graph.read_triplet("graph0.gr");
-    graph.print();
     Matrix* mat_adj= graph.matrix();
+    Matrix* mat_dist = graph.floyd_warshall();
     mat_adj->print();
+    mat_dist->print();
     graph.print();
     //graph.dfs();
 

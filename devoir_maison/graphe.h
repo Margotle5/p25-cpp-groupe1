@@ -6,6 +6,7 @@
 #include <vector>
 #include <unordered_map>
 #include <set>
+#include <limits>
 #include <stack> //J'ajoute les stack pour coder le dfs
 #include "matrix.h"
 
@@ -40,15 +41,15 @@ class Vertex
     friend class Edge;
 
 protected:
-    int name;
+    int number;
     vector<Edge *> edge_list;
     Graph* graph;
 
-    Vertex(int name, Graph* graph) : name(name), graph(graph) {};
+    Vertex(int number, Graph* graph) : number(number), graph(graph) {};
 
     void add_edge(int end, double weight)
     {
-        edge_list.push_back(new Edge(name, end, weight, graph));
+        edge_list.push_back(new Edge(number, end, weight, graph));
     }
 
     // Pour debuger
@@ -59,7 +60,9 @@ protected:
         }
     }
 
-    string str_name(); //pour récupérer le nom d'un sommet
+    set<int> dfs(set<int> visited);
+
+    string name(); //pour récupérer le nom d'un sommet
 
     ~Vertex() 
     {
@@ -101,11 +104,12 @@ protected:
 
 public:
     Matrix* matrix(){
-        adj_matrix = new Matrix(vertex_list.size(), vertex_list.size());
+        adj_matrix = new Matrix(vertex_list.size(), vertex_list.size(), 100000000);
         for (int i = 0; i<vertex_list.size(); i++) {
             for (Edge* edge : vertex_list[i]->edge_list) {
-                adj_matrix->set(i,edge->end, 1);
+                adj_matrix->set(i,edge->end, edge->weight);
             }
+            adj_matrix->set(i,i,0);
         }
         return adj_matrix;
     }
@@ -128,7 +132,6 @@ public:
         }
 
         file.close();
-
     }
 
 
@@ -140,14 +143,22 @@ public:
         vertex_list[correlation_map[begin]]->add_edge(correlation_map[end], value);
     }
 
+    void dfs_rec() {
+        set<int> visited;
+        if (vertex_list.size()>0) {
+            vertex_list[0]->dfs(visited);
+        }
+    }
+
+
     void dfs() {
         set<int> visited;
         stack<int> stack;
 
         if (vertex_list.size() != 0)
         {
-            visited.insert(vertex_list[0]->name);
-            stack.push(vertex_list[0]->name);
+            visited.insert(vertex_list[0]->number);
+            stack.push(vertex_list[0]->number);
             int current;
 
             while (stack.size() != 0) {
@@ -169,12 +180,30 @@ public:
 
     }
 
+    Matrix* floyd_warshall() {
+        /*renvoie la distance minimale entre les deux sommets, s'ils ne sont pas relié renvoie -1*/
+        int n = vertex_list.size();
+        Matrix* matrix_distance = matrix();
+
+        double value;
+
+        for (int k = 0; k<n; k++) {
+            for (int i = 0; i<n; i++) {
+                for (int j = 0; j<n; j++) {
+                    value= min(matrix_distance->get(i,j), matrix_distance->get(i,k) + matrix_distance->get(k,j));
+                    matrix_distance->set(i,j,value);
+                }
+            }
+        }
+        return matrix_distance;
+    }   
+
     // Pour debuger
     void print()
     {
         for (Vertex *vertex : vertex_list)
         {
-            cout << vertex->name << ": " << vertex->str_name() <<endl;
+            cout << vertex->number << ": " << vertex->name() <<endl;
             vertex->print();
         }
     }
@@ -234,9 +263,9 @@ Graph read_triplet(const std::string &filename)
     return g;
 }
 
-inline string Vertex::str_name() {
+inline string Vertex::name() {
     for (auto &e : graph->correlation_map) {
-        if (e.second==name) {
+        if (e.second==number) {
             return e.first;
         }
     }
@@ -245,5 +274,15 @@ inline string Vertex::str_name() {
 }
 
 inline void Edge::print() {
-    cout << graph->vertex_list[start]->str_name() << " -> " << graph->vertex_list[end]->str_name() << " : " << weight << endl;
+    cout << graph->vertex_list[start]->name() << " -> " << graph->vertex_list[end]->name() << " : " << weight << endl;
+}
+
+inline set<int> Vertex::dfs(set<int> visited) {
+    if (visited.find(this->number) != visited.end()) {
+        visited.insert(this->number);
+        for (Edge* edge : edge_list) {
+            visited = graph->vertex_list[edge->end]->dfs(visited);
+        }
+        return visited;
+    }
 }

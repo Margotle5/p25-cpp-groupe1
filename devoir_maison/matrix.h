@@ -56,10 +56,12 @@ public:
 
     }
 
-    int get(int i)
+    double get(int i)
     {
         if (valid_index(i))
             return tab[i];
+
+        return -1;
 
     }
 
@@ -104,7 +106,7 @@ class Matrix
     }
 
 public:
-    Matrix(int r, int c, int init = 0)
+    Matrix(int r, int c, double init = 0)
         : rows(r), columns(c)
     {
         std::cout << "Matrix::Matrix(int, int)\n";
@@ -173,7 +175,7 @@ public:
         }
     }
 
-    int get(int i, int j)
+    double get(int i, int j)
     {
         if (not valid_indices(i, j))
         {
@@ -184,6 +186,8 @@ public:
         {
             return buffer_ptr->get(flatten_indices(i, j));
         }
+
+        return -1;
     }
 
     Matrix reshape(int i, int j)
