@@ -23,32 +23,32 @@ class Edge
 
 protected:
     
-    string start;
-    string end;
+    int start;
+    int end;
     double weight;
+    Graph* graph;
     
-    Edge(string start, string end, double weight) : start(start), end(end), weight(weight) {}
+    Edge(int start, int end, double weight, Graph* graph) : start(start), end(end), weight(weight), graph(graph) {}
 
     //Pour debuger
-    void print() 
-    {
-        cout << start << " -> " << end << " : " << weight<< endl;
-    }
+    void print();
 };
 
 class Vertex
 {
     friend class Graph;
+    friend class Edge;
 
 protected:
-    string name;
+    int name;
     vector<Edge *> edge_list;
+    Graph* graph;
 
-    Vertex(string name) : name(name) {};
+    Vertex(int name, Graph* graph) : name(name), graph(graph) {};
 
-    void add_edge(string end, double weight)
+    void add_edge(int end, double weight)
     {
-        edge_list.push_back(new Edge(name, end, weight));
+        edge_list.push_back(new Edge(name, end, weight, graph));
     }
 
     // Pour debuger
@@ -58,6 +58,8 @@ protected:
             edge->print();
         }
     }
+
+    string str_name(); //pour récupérer le nom d'un sommet
 
     ~Vertex() 
     {
@@ -69,7 +71,10 @@ protected:
 
 class Graph
 {
-private:
+    friend class  Vertex;
+    friend class Edge;
+
+protected:
     vector<Vertex *> vertex_list;
     unordered_map<string, int> correlation_map;
     
@@ -79,7 +84,7 @@ public:
     // on utilise le constructeur par défaut
 
 
-private:
+protected:
     bool is_in_graph(string name)
     {
         return !(correlation_map.find(name) == correlation_map.end());
@@ -89,7 +94,7 @@ private:
     void add_vertex(const string &name)
     {
         if (!is_in_graph(name)) {
-            vertex_list.push_back(new Vertex(name));
+            vertex_list.push_back(new Vertex(correlation_map.size(), this));
             correlation_map.insert({name, correlation_map.size()});
         }
     }
@@ -99,7 +104,7 @@ public:
         adj_matrix = new Matrix(vertex_list.size(), vertex_list.size());
         for (int i = 0; i<vertex_list.size(); i++) {
             for (Edge* edge : vertex_list[i]->edge_list) {
-                adj_matrix->set(i,correlation_map[edge->end], 1);
+                adj_matrix->set(i,edge->end, 1);
             }
         }
         return adj_matrix;
@@ -132,18 +137,18 @@ public:
         add_vertex(begin);
         add_vertex(end);
 
-        vertex_list[correlation_map[begin]]->add_edge(end, value);
+        vertex_list[correlation_map[begin]]->add_edge(correlation_map[end], value);
     }
 
     void dfs() {
-        set<string> visited;
-        stack<string> stack;
+        set<int> visited;
+        stack<int> stack;
 
         if (vertex_list.size() != 0)
         {
             visited.insert(vertex_list[0]->name);
             stack.push(vertex_list[0]->name);
-            string current;
+            int current;
 
             while (stack.size() != 0) {
                 current = stack.top();
@@ -151,7 +156,7 @@ public:
 
                 if (visited.find(current)!=visited.end()) {
                     visited.insert(current);
-                    for (Edge* edge : vertex_list[correlation_map[current]]->edge_list) {
+                    for (Edge* edge : vertex_list[current]->edge_list) {
                         stack.push(edge->end);
                     }
                 }
@@ -169,7 +174,7 @@ public:
     {
         for (Vertex *vertex : vertex_list)
         {
-            cout << vertex->name << ": " <<endl;
+            cout << vertex->name << ": " << vertex->str_name() <<endl;
             vertex->print();
         }
     }
@@ -227,4 +232,18 @@ Graph read_triplet(const std::string &filename)
     //      il faudra mettre Le_Havre
 
     return g;
+}
+
+inline string Vertex::str_name() {
+    for (auto &e : graph->correlation_map) {
+        if (e.second==name) {
+            return e.first;
+        }
+    }
+
+    return "problem"; // Le code ne devrait jamais arriver ici mais il ne veut pas complier sans elle
+}
+
+inline void Edge::print() {
+    cout << graph->vertex_list[start]->str_name() << " -> " << graph->vertex_list[end]->str_name() << " : " << weight << endl;
 }
