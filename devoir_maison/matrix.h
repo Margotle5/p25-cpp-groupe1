@@ -2,6 +2,7 @@
 #pragma once 
 #include <iostream>
 #include <stdexcept>
+#include <limits>
 
 class Buffer
 {
@@ -25,7 +26,7 @@ public:
     }
 
     // Initialise tous les éléments à la même valeur.
-    void reset(int value)
+    void reset(double value)
     {
         for (int i = 0; i < size; i++)
         {
@@ -49,7 +50,7 @@ public:
     }
 
 
-    void set(int i, int value)
+    void set(int i, double value)
     {
         if (valid_index(i))
             tab[i] = value;
@@ -93,6 +94,7 @@ class Matrix
     int rows = 0;
     int columns = 0;
     Buffer *buffer_ptr = nullptr;
+    double infinity = std::numeric_limits<double>::infinity(); //
 
     int flatten_indices(int i, int j)
     {
@@ -106,7 +108,7 @@ class Matrix
     }
 
 public:
-    Matrix(int r, int c, double init = 0)
+    Matrix(int r, int c, double init = 0.0)
         : rows(r), columns(c)
     {
         std::cout << "Matrix::Matrix(int, int)\n";
@@ -114,6 +116,15 @@ public:
 
         buffer_ptr->incr_counter();
     }
+
+    Matrix(int r, int c, double infinity, double init = 0.0)
+        : rows(r), columns(c), infinity(infinity - 1)
+    {
+        std::cout << "Matrix::Matrix(int, int)\n";
+        buffer_ptr = new Buffer(rows * columns, init);
+
+        buffer_ptr->incr_counter();
+    }    
 
 private:
     Matrix(int r, int c, Buffer *buffer_ptr)
@@ -147,14 +158,16 @@ public:
 
     void print()
     {
-        // Pout debugger j'affiche le compteur de Matrix
-        std::cout << "[" << buffer_ptr->get_counter() << "]" << std::endl;
         int n = 0;
         for (int i = 0; i < rows; i++)
         {
             for (int j = 0; j < columns; j++)
             {
-                std::cout << buffer_ptr->tab[n] << " ";
+                if (buffer_ptr->tab[n] >= infinity) { //Pour afficher la matrice d'un graphe, on print inf si il n'y a pas d'arrête entre 2 sommets
+                    std::cout << "inf ";
+                } else {
+                    std::cout << buffer_ptr->tab[n] << " "; 
+                }
                 n = n + 1;
             }
             std::cout << std::endl;

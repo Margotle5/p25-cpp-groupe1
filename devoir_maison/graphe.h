@@ -80,6 +80,7 @@ class Graph
 protected:
     vector<Vertex *> vertex_list;
     unordered_map<string, int> correlation_map;
+    double max_weight = 0;
     
 public:   
     Matrix* adj_matrix=nullptr;
@@ -104,7 +105,7 @@ protected:
 
 public:
     Matrix* matrix(){
-        adj_matrix = new Matrix(vertex_list.size(), vertex_list.size(), 100000000);
+        adj_matrix = new Matrix(vertex_list.size(), vertex_list.size(), max_weight + 10, max_weight + 10); // j'initialise la matrice d'adjacence à une valeur superieur au poids des arrêtes pour l'algorithme de floyd-warshall  
         for (int i = 0; i<vertex_list.size(); i++) {
             for (Edge* edge : vertex_list[i]->edge_list) {
                 adj_matrix->set(i,edge->end, edge->weight);
@@ -139,6 +140,10 @@ public:
     {
         add_vertex(begin);
         add_vertex(end);
+
+        if (value>max_weight) {
+            max_weight = value;
+        }
 
         vertex_list[correlation_map[begin]]->add_edge(correlation_map[end], value);
     }
